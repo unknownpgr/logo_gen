@@ -1,0 +1,150 @@
+<html>
+
+<head>
+    <style>
+        canvas {
+            box-shadow: 10px 10px 20px grey;
+        }
+
+        #controlBox {
+            padding-left: 10%;
+            padding-right: 10%;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-size: 0.9em;
+            color: gray;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        #canvasBox {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="controlBox">
+        <div class="label">크기</div>
+        <input type="range" onmousemove="cSize(this)" max="1000">
+        <div class="label">외곽 선 굵기</div>
+        <input type="range" onmousemove="cLine(this)" max="1000">
+        <div class="label">글자 크기</div>
+        <input type="range" onmousemove="cLetterSize(this)" max="1000">
+        <div class="label">글자 굵기</div>
+        <input type="range" onmousemove="cLetterWidth(this)" max="1000">
+        <div class="label">기호 간 간격</div>
+        <input type="range" onmousemove="cDist(this)" max="1000">
+        <div class="label">전경색</div>
+        <input type="text" onkeyup="cForeground(this)" value="#000000">
+        <div class="label">배경색</div>
+        <input type="text" onkeyup="cBackground(this)" value="#FFFFFF">
+        *이미지를 우클릭하여 저장할 수 있습니다. 그림자 부분은 저장되지 않습니다.
+    </div>
+    <div id="canvasBox"> <canvas id="canvasTag"> </canvas>
+    </div>
+    <script>
+        const PI = Math.PI
+
+        var cnv = canvasTag
+        var ctx = cnv.getContext("2d")
+
+        var offset = 1.5,
+            ratio = 300,
+            term = PI / 7,
+            dist = 0.15,
+            lineWidth = 8,
+            letterSize = 0.16,
+            letterWidth = 4,
+            foreground = '#000000',
+            background = '#FFFFFF'
+
+        function drawLogo() {
+            cnv.width = cnv.height = ratio * offset * 2
+
+            var cX = offset * ratio
+            var cY = offset * ratio
+
+            ctx.lineWidth = lineWidth * ratio / 150
+            ctx.lineCap = "square";
+
+            ctx.fillStyle = background
+            ctx.beginPath()
+            ctx.rect(0, 0, cnv.width, cnv.height)
+            ctx.fill()
+
+            ctx.strokeStyle = foreground
+            ctx.beginPath();
+            ctx.arc(cX, cY, ratio, +term, PI * 3 / 2 - term)
+            ctx.moveTo(cX, cY - ratio)
+            ctx.arc(cX, cY, ratio, -PI / 2, -term)
+            ctx.moveTo(cX, cY - ratio)
+            ctx.arc(cX, cY, ratio * (1 - dist), -PI / 2, PI * 4 / 5)
+            ctx.stroke()
+
+
+            ctx.fillStyle = foreground
+            ctx.beginPath()
+            ctx.arc(cX, cY, ratio * (1 - dist * 2), 0, PI * 2)
+            ctx.fill()
+
+            var unit = ratio * letterSize
+            ctx.strokeStyle = background
+            ctx.lineWidth = letterWidth * ratio / 150
+
+            ctx.beginPath()
+            ctx.arc(cX, cY + unit, unit, PI, PI * 2, true)
+            ctx.arc(cX, cY - unit, unit, 0, PI, true)
+            ctx.arc(cX - unit * 2, cY + unit, unit, 0, PI)
+            ctx.lineTo(cX - unit * 3, cY - unit * 1.5)
+            ctx.moveTo(cX + unit, cY + unit)
+            ctx.arc(cX + unit * 2, cY + unit, unit, PI, PI * 1.5, true)
+            ctx.arc(cX + unit * 2, cY - unit, unit, PI / 2, PI * 7 / 4, false)
+            ctx.stroke()
+        }
+
+        function cSize(item) {
+            ratio = item.value * 300 / 500
+            drawLogo()
+        }
+
+        function cLine(item) {
+            lineWidth = item.value * 8 / 500
+            drawLogo()
+        }
+
+        function cLetterSize(item) {
+            letterSize = item.value * 0.16 / 500
+            drawLogo()
+        }
+
+        function cLetterWidth(item) {
+            letterWidth = item.value * 4 / 500
+            drawLogo()
+        }
+
+        function cDist(item) {
+            dist = item.value * 0.15 / 500
+            drawLogo()
+        }
+
+        function cForeground(item) {
+            foreground = item.value;
+            drawLogo()
+        }
+
+        function cBackground(item) {
+            background = item.value;
+            drawLogo()
+        }
+
+        drawLogo()
+    </script>
+</body>
+
+</html>
